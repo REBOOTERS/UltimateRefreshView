@@ -11,13 +11,12 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 /**
- * Created by co-mall on 2017/4/26.
+ * Created by engineer on 2017/4/26.
  */
 
 public class ProgressBarAdapter extends BaseHeaderAdapter {
 
     private View headerView;
-
     //
     private TextView headerText;
     private ProgressBar mProgressBar;
@@ -37,13 +36,13 @@ public class ProgressBarAdapter extends BaseHeaderAdapter {
     }
 
     @Override
-    public void pullViewToRefresh() {
-        headerText.setText("pull more to refresh");
+    public void pullViewToRefresh(int deltaY) {
+        headerText.setText("下拉刷新");
     }
 
     @Override
-    public void releaseViewToRefresh() {
-        headerText.setText("release to refresh");
+    public void releaseViewToRefresh(int deltaY) {
+        headerText.setText("释放刷新");
     }
 
     @Override

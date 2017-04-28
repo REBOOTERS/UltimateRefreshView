@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 /**
- * Created by co-mall on 2017/4/19.
+ * Created by engineer on 2017/4/19.
  */
 
 public class UltimateRefreshView extends LinearLayout {
