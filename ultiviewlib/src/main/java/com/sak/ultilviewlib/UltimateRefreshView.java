@@ -182,10 +182,10 @@ public class UltimateRefreshView extends LinearLayout {
     private void initHeaderViewToRefresh(int deltaY) {
         int topDistance = UpdateHeadViewMarginTop(deltaY);
         if (topDistance < 0 && topDistance > -headViewHeight) {
-            mBaseHeaderAdapter.pullViewToRefresh();
+            mBaseHeaderAdapter.pullViewToRefresh(deltaY);
             mHeaderState = PULL_TO_REFRESH;
         } else if (topDistance > 0 && mHeaderState != RELEASE_TO_REFRESH) {
-            mBaseHeaderAdapter.releaseViewToRefresh();
+            mBaseHeaderAdapter.releaseViewToRefresh(deltaY);
             mHeaderState = RELEASE_TO_REFRESH;
         }
 
