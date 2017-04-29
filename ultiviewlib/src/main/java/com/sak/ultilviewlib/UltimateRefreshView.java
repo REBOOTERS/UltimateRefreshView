@@ -1,32 +1,41 @@
 package com.sak.ultilviewlib;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+
+import com.sak.ultilviewlib.adapter.BaseFooterAdapter;
+import com.sak.ultilviewlib.adapter.BaseHeaderAdapter;
+import com.sak.ultilviewlib.adapter.InitFooterAdapter;
+import com.sak.ultilviewlib.adapter.InitHeaderAdapter;
+import com.sak.ultilviewlib.interfaces.OnFooterRefreshListener;
+import com.sak.ultilviewlib.interfaces.OnHeaderRefreshListener;
+import com.sak.ultilviewlib.util.MeasureTools;
 
 /**
  * Created by engineer on 2017/4/19.
  */
 
 public class UltimateRefreshView extends LinearLayout {
-    private static final String TAG = "UtrilPulltoRefreshView";
-    // refresh states
+
+    private static final String TAG = UltimateRefreshView.class.getSimpleName();
+    // 刷新时状态
     private static final int PULL_TO_REFRESH = 2;
     private static final int RELEASE_TO_REFRESH = 3;
     private static final int REFRESHING = 4;
     // pull state
     private static final int PULL_UP_STATE = 0;
     private static final int PULL_DOWN_STATE = 1;
+
+    private int mPullState;
 
     /**
      * list or grid
@@ -45,24 +54,25 @@ public class UltimateRefreshView extends LinearLayout {
      */
     private WebView mWebView;
 
+
+    //Header
     private int mHeaderState;
-    /**
-     * pull state,pull up or pull down;PULL_UP_STATE or PULL_DOWN_STATE
-     */
-    private int mPullState;
-
-    private View headerView;
-
-    private int headViewHeight;
-
+    private View mHeaderView;
+    private int mHeadViewHeight;
+    //Footer
+    private int mFooterState;
+    private View mFooterView;
+    private int mFooterViewHeight;
     //action
     private int lastY;
 
     private BaseHeaderAdapter mBaseHeaderAdapter;
+    private BaseFooterAdapter mBaseFooterAdapter;
+    private OnHeaderRefreshListener mOnHeaderRefreshListener;
+    private OnFooterRefreshListener mOnFooterRefreshListener;
 
-    public void setBaseHeaderAdapter(BaseHeaderAdapter baseHeaderAdapter) {
-        mBaseHeaderAdapter = baseHeaderAdapter;
-    }
+    private Context mContext;
+
 
     public UltimateRefreshView(Context context) {
         super(context);
@@ -80,33 +90,65 @@ public class UltimateRefreshView extends LinearLayout {
     }
 
     private void init(Context context) {
+        //设置为垂直布局，避免每次在xml中修改(LinearLayout 默认为horizontal)
         setOrientation(VERTICAL);
-        if (mBaseHeaderAdapter == null) {
-            mBaseHeaderAdapter = new ProgressBarAdapter(context);
-        }
-        initView();
+        mContext = context;
+
     }
 
-    private void initView() {
-        headerView = mBaseHeaderAdapter.getHeaderView();
-        measureView(headerView);
-        headViewHeight = headerView.getMeasuredHeight();
-        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, headViewHeight);
-        params.topMargin = -headViewHeight;
-        addView(headerView, params);
-    }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
+    public void setBaseHeaderAdapter(BaseHeaderAdapter baseHeaderAdapter) {
+        mBaseHeaderAdapter = baseHeaderAdapter;
+        initHeaderView();
         initSubViewType();
     }
 
+    public void setBaseHeaderAdapter() {
+        mBaseHeaderAdapter = new InitHeaderAdapter(mContext);
+        initHeaderView();
+        initSubViewType();
+    }
+
+    public void setBaseFooterAdapter(BaseFooterAdapter baseFooterAdapter) {
+        mBaseFooterAdapter = baseFooterAdapter;
+        initFooterView();
+    }
+
+    public void setBaseFooterAdapter() {
+        mBaseFooterAdapter = new InitFooterAdapter(mContext);
+        initFooterView();
+    }
+
+    /**
+     * 计算顶部view 高度，将其隐藏
+     */
+    private void initHeaderView() {
+        mHeaderView = mBaseHeaderAdapter.getHeaderView();
+        MeasureTools.measureView(mHeaderView);
+        mHeadViewHeight = mHeaderView.getMeasuredHeight();
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, mHeadViewHeight);
+        params.topMargin = -mHeadViewHeight;
+        addView(mHeaderView, 0, params);
+
+    }
+
+    private void initFooterView() {
+        mFooterView = mBaseFooterAdapter.getFooterView();
+        MeasureTools.measureView(mFooterView);
+        mFooterViewHeight = mFooterView.getMeasuredHeight();
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
+                mFooterViewHeight);
+        addView(mFooterView, params);
+    }
+
+
+    /**
+     * 确定UltimateRefreshView 内部子视图类型
+     */
     private void initSubViewType() {
         int count = getChildCount();
         if (count < 2) {
-            throw new IllegalArgumentException(
-                    "this layout must contain 2 child views,and AdapterView or ScrollView must in the second position!");
+            return;
         }
 
         View view = getChildAt(1);
@@ -159,6 +201,8 @@ public class UltimateRefreshView extends LinearLayout {
                 if (mPullState == PULL_DOWN_STATE) {
                     Log.e(TAG, "onTouchEvent: pull down begin-->" + deltaY);
                     initHeaderViewToRefresh(deltaY);
+                } else if (mPullState == PULL_UP_STATE) {
+                    initFooterViewToRefresh(deltaY);
                 }
                 lastY = y;
                 break;
@@ -170,7 +214,16 @@ public class UltimateRefreshView extends LinearLayout {
                     if (topMargin >= 0) {
                         headerRefreshing();
                     } else {
-                        setHeaderTopMargin(-headViewHeight);
+                        setHeaderTopMargin(-mHeadViewHeight);
+                    }
+                } else if (mPullState == PULL_UP_STATE) {
+                    if (Math.abs(topMargin) >= mHeadViewHeight
+                            + mFooterViewHeight) {
+                        // 开始执行footer 刷新
+                        footerRefreshing();
+                    } else {
+                        // 还没有执行刷新，重新隐藏
+                        setHeaderTopMargin(-mHeadViewHeight);
                     }
                 }
                 break;
@@ -179,9 +232,13 @@ public class UltimateRefreshView extends LinearLayout {
         return super.onTouchEvent(event);
     }
 
+
     private void initHeaderViewToRefresh(int deltaY) {
+        if (mBaseHeaderAdapter == null) {
+            return;
+        }
         int topDistance = UpdateHeadViewMarginTop(deltaY);
-        if (topDistance < 0 && topDistance > -headViewHeight) {
+        if (topDistance < 0 && topDistance > -mHeadViewHeight) {
             mBaseHeaderAdapter.pullViewToRefresh(deltaY);
             mHeaderState = PULL_TO_REFRESH;
         } else if (topDistance > 0 && mHeaderState != RELEASE_TO_REFRESH) {
@@ -191,32 +248,78 @@ public class UltimateRefreshView extends LinearLayout {
 
     }
 
+    private void initFooterViewToRefresh(int deltaY) {
+        if (mBaseFooterAdapter == null) {
+            return;
+        }
+
+        int topDistance = UpdateHeadViewMarginTop(deltaY);
+        // 如果header view topMargin 的绝对值大于或等于header + footer 的高度
+        // 说明footer view 完全显示出来了，修改footer view 的提示状态
+        if (Math.abs(topDistance) >= (mHeadViewHeight + mFooterViewHeight)
+                && mFooterState != RELEASE_TO_REFRESH) {
+            mBaseFooterAdapter.pullViewToRefresh(deltaY);
+            mFooterState = RELEASE_TO_REFRESH;
+        } else if (Math.abs(topDistance) < (mHeadViewHeight + mFooterViewHeight)) {
+            mBaseFooterAdapter.releaseViewToRefresh(deltaY);
+            mFooterState = PULL_TO_REFRESH;
+        }
+    }
+
+
     private int UpdateHeadViewMarginTop(int deltaY) {
-        LayoutParams params = (LayoutParams) headerView.getLayoutParams();
+        LayoutParams params = (LayoutParams) mHeaderView.getLayoutParams();
         float topMargin = params.topMargin + deltaY * 0.3f;
         params.topMargin = (int) topMargin;
-        headerView.setLayoutParams(params);
+        mHeaderView.setLayoutParams(params);
         invalidate();
         return params.topMargin;
     }
 
 
     private void headerRefreshing() {
+        if (mBaseHeaderAdapter == null) {
+            return;
+        }
+
         mHeaderState = REFRESHING;
         setHeaderTopMargin(0);
         mBaseHeaderAdapter.headerRefreshing();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                refreshComplete();
-            }
-        }, 2000);
+        if (mOnHeaderRefreshListener != null) {
+            mOnHeaderRefreshListener.onHeaderRefresh(this);
+        }
     }
 
-    private void refreshComplete() {
-        setHeaderTopMargin(-headViewHeight);
+    private void footerRefreshing() {
+        if (mBaseFooterAdapter == null) {
+            return;
+        }
+
+        mFooterState = REFRESHING;
+        int top = mHeadViewHeight + mFooterViewHeight;
+        setHeaderTopMargin(-top);
+        mBaseFooterAdapter.footerRefreshing();
+        if (mOnFooterRefreshListener != null) {
+            mOnFooterRefreshListener.onFooterRefresh(this);
+        }
+    }
+
+    public void onHeaderRefreshComplete() {
+        if (mBaseHeaderAdapter == null) {
+            return;
+        }
+        setHeaderTopMargin(-mHeadViewHeight);
         mBaseHeaderAdapter.headerRefreshComplete();
         mHeaderState = PULL_TO_REFRESH;
+    }
+
+    public void onFooterRefreshComplete() {
+        if (mBaseFooterAdapter == null) {
+            return;
+        }
+        setHeaderTopMargin(-mHeadViewHeight);
+        mBaseFooterAdapter.footerRefreshComplete();
+        mFooterState = PULL_TO_REFRESH;
     }
 
     /**
@@ -243,6 +346,21 @@ public class UltimateRefreshView extends LinearLayout {
                     mPullState = PULL_DOWN_STATE;
                     belongToParentView = true;
                 }
+            } else if (deltaY < 0) {
+                View lastChild = mAdapterView.getChildAt(mAdapterView
+                        .getChildCount() - 1);
+                if (lastChild == null) {
+                    // 如果mAdapterView中没有数据,不拦截
+                    belongToParentView = false;
+                }
+                // 最后一个子view的Bottom小于父View的高度说明mAdapterView的数据没有填满父view,
+                // 等于父View的高度说明mAdapterView已经滑动到最后
+                if (lastChild.getBottom() <= getHeight()
+                        && mAdapterView.getLastVisiblePosition() == mAdapterView
+                        .getCount() - 1) {
+                    mPullState = PULL_UP_STATE;
+                    belongToParentView = true;
+                }
             }
         }
 
@@ -263,8 +381,9 @@ public class UltimateRefreshView extends LinearLayout {
         }
 
         if (mScrollView != null) {
+            View child = mScrollView.getChildAt(0);
             if (deltaY > 0) {
-                View child = mScrollView.getChildAt(0);
+
                 if (child == null) {
                     belongToParentView = false;
                 }
@@ -274,12 +393,19 @@ public class UltimateRefreshView extends LinearLayout {
                     mPullState = PULL_DOWN_STATE;
                     belongToParentView = true;
                 }
+            } else if (deltaY < 0
+                    && child.getMeasuredHeight() <= getHeight()
+                    + mScrollView.getScrollY()) {
+                mPullState = PULL_UP_STATE;
+                belongToParentView = true;
+
             }
         }
 
         if (mWebView != null) {
+            View child = mWebView.getChildAt(0);
             if (deltaY > 0) {
-                View child = mWebView.getChildAt(0);
+
                 if (child == null) {
                     belongToParentView = false;
                 }
@@ -296,23 +422,6 @@ public class UltimateRefreshView extends LinearLayout {
         return belongToParentView;
     }
 
-    private void measureView(View child) {
-        ViewGroup.LayoutParams p = child.getLayoutParams();
-        if (p == null) {
-            p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-        }
-
-        int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0 + 0, p.width);
-        int lpHeight = p.height;
-        int childHeightSpec;
-        if (lpHeight > 0) {
-            childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight, MeasureSpec.EXACTLY);
-        } else {
-            childHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
-        }
-        child.measure(childWidthSpec, childHeightSpec);
-    }
 
     /**
      * 获取当前header view 的topMargin
@@ -320,8 +429,9 @@ public class UltimateRefreshView extends LinearLayout {
      * @return
      * @description
      */
+
     private int getHeaderTopMargin() {
-        LayoutParams params = (LayoutParams) headerView.getLayoutParams();
+        LayoutParams params = (LayoutParams) mHeaderView.getLayoutParams();
         return params.topMargin;
     }
 
@@ -329,13 +439,30 @@ public class UltimateRefreshView extends LinearLayout {
      * 设置header view 的topMargin的值
      *
      * @param topMargin ，为0时，说明header view 刚好完全显示出来； 为-mHeaderViewHeight时，说明完全隐藏了
-     *                  hylin 2012-7-31上午11:24:06
      * @description
      */
     private void setHeaderTopMargin(int topMargin) {
-        LayoutParams params = (LayoutParams) headerView.getLayoutParams();
+        LayoutParams params = (LayoutParams) mHeaderView.getLayoutParams();
         params.topMargin = topMargin;
-        headerView.setLayoutParams(params);
+        mHeaderView.setLayoutParams(params);
         invalidate();
+    }
+
+
+    public BaseHeaderAdapter getBaseHeaderAdapter() {
+        return mBaseHeaderAdapter;
+    }
+
+
+    public BaseFooterAdapter getBaseFooterAdapter() {
+        return mBaseFooterAdapter;
+    }
+
+    public void setOnHeaderRefreshListener(OnHeaderRefreshListener onHeaderRefreshListener) {
+        mOnHeaderRefreshListener = onHeaderRefreshListener;
+    }
+
+    public void setOnFooterRefreshListener(OnFooterRefreshListener onFooterRefreshListener) {
+        mOnFooterRefreshListener = onFooterRefreshListener;
     }
 }
