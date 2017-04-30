@@ -214,7 +214,7 @@ public class UltimateRefreshView extends LinearLayout {
                     if (topMargin >= 0) {
                         headerRefreshing();
                     } else {
-                        setHeaderTopMargin(-mHeadViewHeight);
+                        reSetHeaderTopMargin(-mHeadViewHeight);
                     }
                 } else if (mPullState == PULL_UP_STATE) {
                     if (Math.abs(topMargin) >= mHeadViewHeight
@@ -223,7 +223,7 @@ public class UltimateRefreshView extends LinearLayout {
                         footerRefreshing();
                     } else {
                         // 还没有执行刷新，重新隐藏
-                        setHeaderTopMargin(-mHeadViewHeight);
+                        reSetHeaderTopMargin(-mHeadViewHeight);
                     }
                 }
                 break;
@@ -450,6 +450,27 @@ public class UltimateRefreshView extends LinearLayout {
      * @description
      */
     private void setHeaderTopMargin(int topMargin) {
+
+        LayoutParams params = (LayoutParams) mHeaderView.getLayoutParams();
+        params.topMargin = topMargin;
+        mHeaderView.setLayoutParams(params);
+        invalidate();
+    }
+
+    /**
+     * //上拉或下拉至一半时，放弃下来，视为完成一次下拉统一处理，初始化所有内容
+     * @param topMargin
+     */
+    private void reSetHeaderTopMargin(int topMargin) {
+
+        if (mBaseHeaderAdapter != null) {
+            mBaseHeaderAdapter.headerRefreshComplete();
+        }
+
+        if(mBaseFooterAdapter!=null){
+            mBaseFooterAdapter.footerRefreshComplete();
+        }
+
         LayoutParams params = (LayoutParams) mHeaderView.getLayoutParams();
         params.topMargin = topMargin;
         mHeaderView.setLayoutParams(params);
@@ -457,14 +478,6 @@ public class UltimateRefreshView extends LinearLayout {
     }
 
 
-    public BaseHeaderAdapter getBaseHeaderAdapter() {
-        return mBaseHeaderAdapter;
-    }
-
-
-    public BaseFooterAdapter getBaseFooterAdapter() {
-        return mBaseFooterAdapter;
-    }
 
     public void setOnHeaderRefreshListener(OnHeaderRefreshListener onHeaderRefreshListener) {
         mOnHeaderRefreshListener = onHeaderRefreshListener;

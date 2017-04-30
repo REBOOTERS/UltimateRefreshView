@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.sak.app.R;
+import com.sak.app.adapter.MeiTuanHeaderAdapter;
 import com.sak.ultilviewlib.UltimateRefreshView;
 import com.sak.ultilviewlib.interfaces.OnFooterRefreshListener;
 import com.sak.ultilviewlib.interfaces.OnHeaderRefreshListener;
@@ -46,7 +47,7 @@ public class ListViewFragment extends Fragment {
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, datas);
         listView.setAdapter(adapter);
         mUltimateRefreshView = (UltimateRefreshView) view.findViewById(R.id.refreshView);
-        mUltimateRefreshView.setBaseHeaderAdapter();
+        mUltimateRefreshView.setBaseHeaderAdapter(new MeiTuanHeaderAdapter(getContext()));
         mUltimateRefreshView.setBaseFooterAdapter();
         mUltimateRefreshView.setOnHeaderRefreshListener(new OnHeaderRefreshListener() {
             @Override

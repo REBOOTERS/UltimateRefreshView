@@ -37,6 +37,7 @@ public class InitHeaderAdapter extends BaseHeaderAdapter {
         headerText.setText("下拉刷新");
     }
 
+
     @Override
     public void releaseViewToRefresh(int deltaY) {
         headerText.setText("松开刷新");

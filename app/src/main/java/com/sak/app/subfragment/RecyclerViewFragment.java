@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sak.app.R;
-import com.sak.app.TraditionFooterAdapter;
-import com.sak.app.TraditionHeaderAdapter;
+import com.sak.app.adapter.TraditionFooterAdapter;
+import com.sak.app.adapter.TraditionHeaderAdapter;
 import com.sak.ultilviewlib.UltimateRefreshView;
 import com.sak.ultilviewlib.interfaces.OnFooterRefreshListener;
 import com.sak.ultilviewlib.interfaces.OnHeaderRefreshListener;

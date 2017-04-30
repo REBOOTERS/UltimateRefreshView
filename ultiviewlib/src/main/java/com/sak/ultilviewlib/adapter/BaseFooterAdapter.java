@@ -29,6 +29,7 @@ public abstract class BaseFooterAdapter {
      */
     public abstract void pullViewToRefresh(int deltaY);
 
+
     /**
      * footerView 上拉后，完全显示时 此事件发生
      *

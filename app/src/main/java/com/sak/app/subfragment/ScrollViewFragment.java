@@ -8,8 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.sak.app.JDAppFooterAdapter;
-import com.sak.app.JDAppHeaderAdpater;
+import com.sak.app.adapter.JDAppFooterAdapter;
+import com.sak.app.adapter.JDAppHeaderAdpater;
 import com.sak.app.R;
 import com.sak.ultilviewlib.UltimateRefreshView;
 import com.sak.ultilviewlib.interfaces.OnFooterRefreshListener;

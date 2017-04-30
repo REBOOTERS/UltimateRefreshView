@@ -33,6 +33,7 @@ public class InitFooterAdapter extends BaseFooterAdapter {
         headerText.setText("上拉加载");
     }
 
+
     @Override
     public void releaseViewToRefresh(int deltaY) {
         headerText.setText("上拉加载");

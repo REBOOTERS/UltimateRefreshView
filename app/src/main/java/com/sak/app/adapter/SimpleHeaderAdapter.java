@@ -1,10 +1,11 @@
-package com.sak.app;
+package com.sak.app.adapter;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.sak.app.R;
 import com.sak.ultilviewlib.adapter.BaseHeaderAdapter;
 
 /**
@@ -46,7 +47,9 @@ public class SimpleHeaderAdapter extends BaseHeaderAdapter {
 
     @Override
     public void headerRefreshComplete() {
-        rotateAnim.cancel();
+        if (rotateAnim != null) {
+            rotateAnim.cancel();
+        }
         rotateAnim = null;
     }
 }

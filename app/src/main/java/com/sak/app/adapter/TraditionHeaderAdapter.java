@@ -1,4 +1,4 @@
-package com.sak.app;
+package com.sak.app.adapter;
 
 import android.content.Context;
 import android.view.View;
@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.sak.app.R;
 import com.sak.ultilviewlib.adapter.BaseHeaderAdapter;
 
 /**

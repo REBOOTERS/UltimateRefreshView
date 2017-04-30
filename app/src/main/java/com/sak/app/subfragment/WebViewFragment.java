@@ -11,7 +11,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import com.sak.app.R;
-import com.sak.app.SimpleHeaderAdapter;
+import com.sak.app.adapter.SimpleHeaderAdapter;
 import com.sak.ultilviewlib.UltimateRefreshView;
 import com.sak.ultilviewlib.interfaces.OnHeaderRefreshListener;
 
