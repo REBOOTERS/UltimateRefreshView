@@ -8,9 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.sak.app.JDAppFooterAdapter;
 import com.sak.app.JDAppHeaderAdpater;
 import com.sak.app.R;
 import com.sak.ultilviewlib.UltimateRefreshView;
+import com.sak.ultilviewlib.interfaces.OnFooterRefreshListener;
 import com.sak.ultilviewlib.interfaces.OnHeaderRefreshListener;
 
 
@@ -38,7 +40,7 @@ public class ScrollViewFragment extends Fragment {
     private void initView(View view) {
         mUltimateRefreshView = (UltimateRefreshView) view.findViewById(R.id.refreshView);
         mUltimateRefreshView.setBaseHeaderAdapter(new JDAppHeaderAdpater(mContext));
-
+        mUltimateRefreshView.setBaseFooterAdapter(new JDAppFooterAdapter(mContext));
         mUltimateRefreshView.setOnHeaderRefreshListener(new OnHeaderRefreshListener() {
             @Override
             public void onHeaderRefresh(UltimateRefreshView view) {
@@ -48,6 +50,17 @@ public class ScrollViewFragment extends Fragment {
                         mUltimateRefreshView.onHeaderRefreshComplete();
                     }
                 },2000);
+            }
+        });
+        mUltimateRefreshView.setOnFooterRefreshListener(new OnFooterRefreshListener() {
+            @Override
+            public void onFooterRefresh(UltimateRefreshView view) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mUltimateRefreshView.onFooterRefreshComplete();
+                    }
+                },800);
             }
         });
     }

@@ -373,10 +373,18 @@ public class UltimateRefreshView extends LinearLayout {
                 }
                 LinearLayoutManager mLinearLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
                 int firstPosition = mLinearLayoutManager.findFirstCompletelyVisibleItemPosition();
+
                 if (firstPosition == 0) {
                     mPullState = PULL_DOWN_STATE;
                     belongToParentView = true;
                 }
+            }else if(deltaY < 0) {
+                View child = mRecyclerView.getChildAt(0);
+                if (child == null) {
+                    belongToParentView = false;
+                }
+                LinearLayoutManager mLinearLayoutManager= (LinearLayoutManager) mRecyclerView.getLayoutManager();
+
             }
         }
 

@@ -1,6 +1,7 @@
 package com.sak.app.subfragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sak.app.R;
+import com.sak.app.TraditionFooterAdapter;
+import com.sak.app.TraditionHeaderAdapter;
+import com.sak.ultilviewlib.UltimateRefreshView;
+import com.sak.ultilviewlib.interfaces.OnFooterRefreshListener;
+import com.sak.ultilviewlib.interfaces.OnHeaderRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +27,7 @@ import java.util.List;
  */
 public class RecyclerViewFragment extends Fragment {
 
-
+    private UltimateRefreshView mUltimateRefreshView;
     private List<String> datas;
 
 
@@ -32,18 +38,40 @@ public class RecyclerViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         datas = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 20; i++) {
             datas.add("this is item " + i);
         }
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(new MyAdapter());
+        mUltimateRefreshView = (UltimateRefreshView) view.findViewById(R.id.refreshView);
+        mUltimateRefreshView.setBaseHeaderAdapter(new TraditionHeaderAdapter(getContext()));
+        mUltimateRefreshView.setBaseFooterAdapter(new TraditionFooterAdapter(getContext()));
+        mUltimateRefreshView.setOnHeaderRefreshListener(new OnHeaderRefreshListener() {
+            @Override
+            public void onHeaderRefresh(UltimateRefreshView view) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                      mUltimateRefreshView.onHeaderRefreshComplete();
+                    }
+                },2000);
+            }
+        });
+
+        mUltimateRefreshView.setOnFooterRefreshListener(new OnFooterRefreshListener() {
+            @Override
+            public void onFooterRefresh(UltimateRefreshView view) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mUltimateRefreshView.onFooterRefreshComplete();
+                    }
+                },800);
+            }
+        });
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> {
 
