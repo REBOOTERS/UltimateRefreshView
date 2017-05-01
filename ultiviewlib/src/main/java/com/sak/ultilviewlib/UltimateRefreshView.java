@@ -378,13 +378,19 @@ public class UltimateRefreshView extends LinearLayout {
                     mPullState = PULL_DOWN_STATE;
                     belongToParentView = true;
                 }
-            }else if(deltaY < 0) {
+            } else if (deltaY < 0) {
                 View child = mRecyclerView.getChildAt(0);
                 if (child == null) {
                     belongToParentView = false;
                 }
-                LinearLayoutManager mLinearLayoutManager= (LinearLayoutManager) mRecyclerView.getLayoutManager();
+                if (mRecyclerView.computeVerticalScrollExtent() + mRecyclerView.computeVerticalScrollOffset()
+                        >= mRecyclerView.computeVerticalScrollRange()){
 
+                    belongToParentView = true;
+                }else {
+
+                    belongToParentView = false;
+                }
             }
         }
 
@@ -459,6 +465,7 @@ public class UltimateRefreshView extends LinearLayout {
 
     /**
      * //上拉或下拉至一半时，放弃下来，视为完成一次下拉统一处理，初始化所有内容
+     *
      * @param topMargin
      */
     private void reSetHeaderTopMargin(int topMargin) {
@@ -467,7 +474,7 @@ public class UltimateRefreshView extends LinearLayout {
             mBaseHeaderAdapter.headerRefreshComplete();
         }
 
-        if(mBaseFooterAdapter!=null){
+        if (mBaseFooterAdapter != null) {
             mBaseFooterAdapter.footerRefreshComplete();
         }
 
@@ -476,7 +483,6 @@ public class UltimateRefreshView extends LinearLayout {
         mHeaderView.setLayoutParams(params);
         invalidate();
     }
-
 
 
     public void setOnHeaderRefreshListener(OnHeaderRefreshListener onHeaderRefreshListener) {
