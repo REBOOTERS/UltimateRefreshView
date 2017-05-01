@@ -55,7 +55,7 @@ public class TraditionFooterAdapter extends BaseFooterAdapter {
 
     @Override
     public void footerRefreshing() {
-        pull_to_load_text.setText("加载中\\u2026");
+        pull_to_load_text.setText("加载中");
         pull_to_load_image.setImageDrawable(null);
         pull_to_load_image.clearAnimation();
         pull_to_load_image.setVisibility(View.GONE);
@@ -66,6 +66,8 @@ public class TraditionFooterAdapter extends BaseFooterAdapter {
     public void footerRefreshComplete() {
         pull_to_load_progress.setVisibility(View.GONE);
         pull_to_load_image.setImageResource(R.drawable.ic_pulltorefresh_arrow_up);
-        pull_to_load_text.setText("");
+        pull_to_load_image.setVisibility(View.VISIBLE);
+        pull_to_load_text.setVisibility(View.VISIBLE);
+        pull_to_load_text.setText("上拉加载更多…");
     }
 }

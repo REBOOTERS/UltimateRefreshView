@@ -254,13 +254,16 @@ public class UltimateRefreshView extends LinearLayout {
         }
 
         int topDistance = UpdateHeadViewMarginTop(deltaY);
-        // 如果header view topMargin 的绝对值大于或等于header + footer 的高度
+
+        Log.e("zzz", "the distance  is " + topDistance);
+
+        // 如果header view topMargin 的绝对值大于或等于(header + footer) 四分之一 的高度
         // 说明footer view 完全显示出来了，修改footer view 的提示状态
-        if (Math.abs(topDistance) >= (mHeadViewHeight + mFooterViewHeight)
+        if (Math.abs(topDistance) >= (mHeadViewHeight + mFooterViewHeight)/4
                 && mFooterState != RELEASE_TO_REFRESH) {
             mBaseFooterAdapter.pullViewToRefresh(deltaY);
             mFooterState = RELEASE_TO_REFRESH;
-        } else if (Math.abs(topDistance) < (mHeadViewHeight + mFooterViewHeight)) {
+        } else if (Math.abs(topDistance) < (mHeadViewHeight + mFooterViewHeight)/4) {
             mBaseFooterAdapter.releaseViewToRefresh(deltaY);
             mFooterState = PULL_TO_REFRESH;
         }
@@ -385,10 +388,9 @@ public class UltimateRefreshView extends LinearLayout {
                 }
                 if (mRecyclerView.computeVerticalScrollExtent() + mRecyclerView.computeVerticalScrollOffset()
                         >= mRecyclerView.computeVerticalScrollRange()){
-
                     belongToParentView = true;
+                    mPullState = PULL_UP_STATE;
                 }else {
-
                     belongToParentView = false;
                 }
             }

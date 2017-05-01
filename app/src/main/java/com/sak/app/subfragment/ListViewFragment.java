@@ -80,7 +80,7 @@ public class ListViewFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                         mUltimateRefreshView.onFooterRefreshComplete();
                     }
-                }, 500);
+                }, 200);
             }
         });
     }
