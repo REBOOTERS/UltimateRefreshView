@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:orientation="horizontal">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/loading_pre"
+        android:layout_width="60dp"
+        android:layout_height="70dp"
+        android:layout_margin="5dp"
+        android:gravity="center_vertical"
+        android:scaleX="1"
+        android:scaleY="1">
+
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="70dp"
+            android:src="@drawable/x9"/>
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@drawable/x7"/>
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/loading"
+        android:src="@drawable/x_"
+        android:layout_width="50dp"
+        android:layout_height="70dp"
+        android:layout_margin="5dp"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="让购物更便捷"
+            android:textColor="@color/black"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/header_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:text="下拉刷新"/>
+    </LinearLayout>
+
+
+</LinearLayout>

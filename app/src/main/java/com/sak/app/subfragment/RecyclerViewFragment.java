@@ -1,6 +1,7 @@
 package com.sak.app.subfragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,45 +11,25 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sak.app.R;
+import com.sak.app.adapter.TraditionFooterAdapter;
+import com.sak.app.adapter.TraditionHeaderAdapter;
+import com.sak.ultilviewlib.UltimateRefreshView;
+import com.sak.ultilviewlib.interfaces.OnFooterRefreshListener;
+import com.sak.ultilviewlib.interfaces.OnHeaderRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * A fragment with a Google +1 button.
  * Activities that contain this fragment must implement the
  * create an instance of this fragment.
  */
 public class RecyclerViewFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    // The request code must be 0 or greater.
-    private static final int PLUS_ONE_REQUEST_CODE = 0;
-    // The URL to +1.  Must be a valid URL.
-    private final String PLUS_ONE_URL = "http://developer.android.com";
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
+    private UltimateRefreshView mUltimateRefreshView;
     private List<String> datas;
 
-
-    public RecyclerViewFragment() {
-        // Required empty public constructor
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,18 +38,40 @@ public class RecyclerViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         datas = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 20; i++) {
             datas.add("this is item " + i);
         }
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(new MyAdapter());
+        mUltimateRefreshView = (UltimateRefreshView) view.findViewById(R.id.refreshView);
+        mUltimateRefreshView.setBaseHeaderAdapter(new TraditionHeaderAdapter(getContext()));
+        mUltimateRefreshView.setBaseFooterAdapter(new TraditionFooterAdapter(getContext()));
+        mUltimateRefreshView.setOnHeaderRefreshListener(new OnHeaderRefreshListener() {
+            @Override
+            public void onHeaderRefresh(UltimateRefreshView view) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                      mUltimateRefreshView.onHeaderRefreshComplete();
+                    }
+                },2000);
+            }
+        });
+
+        mUltimateRefreshView.setOnFooterRefreshListener(new OnFooterRefreshListener() {
+            @Override
+            public void onFooterRefresh(UltimateRefreshView view) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mUltimateRefreshView.onFooterRefreshComplete();
+                    }
+                },800);
+            }
+        });
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> {
 

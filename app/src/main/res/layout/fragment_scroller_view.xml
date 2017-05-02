@@ -6,51 +6,31 @@
 
     <!-- TODO: Update blank fragment layout -->
     <com.sak.ultilviewlib.UltimateRefreshView
+        android:id="@+id/refreshView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ScrollView
-            android:scrollbars="none"
             android:id="@+id/scrollview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:scrollbars="none">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/jd_fake"/>
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:src="@drawable/a6"
-                    android:scaleType="fitXY"
-                    android:layout_height="wrap_content"/>
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:src="@drawable/a6"
-                    android:scaleType="fitXY"
-                    android:layout_height="wrap_content"/>
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:src="@drawable/a6"
-                    android:scaleType="fitXY"
-                    android:layout_height="wrap_content"/>
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:src="@drawable/a6"
-                    android:scaleType="fitXY"
-                    android:layout_height="wrap_content"/>
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:src="@drawable/a6"
-                    android:scaleType="fitXY"
-                    android:layout_height="wrap_content"/>
             </LinearLayout>
         </ScrollView>
     </com.sak.ultilviewlib.UltimateRefreshView>
-
 
 
 </FrameLayout>
