@@ -25,9 +25,16 @@ android {
         options.encoding = "UTF-8"
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
+    //加上这些
     tasks.withType(Javadoc) {
-        options.addStringOption('Xdoclint:none', '-quiet')
-        options.addStringOption('encoding', 'UTF-8')
+        options{ encoding "UTF-8"
+            charSet 'UTF-8'
+            links "http://docs.oracle.com/javase/7/docs/api"
+        }
     }
 
 }
@@ -44,8 +51,8 @@ dependencies {
 
 //添加
 publish {
-    userOrg = 'rebooter'//bintray.com用户名
-    groupId = 'com.rebooter'//jcenter上的路径
+    userOrg = 'rookieboy'//bintray.com用户名
+    groupId = 'com.reoobter'//jcenter上的路径
     artifactId = 'ultrapullview'//项目名称
     publishVersion = '1.0.0'//版本号
     desc = 'This is a library for pull to Refresh for kinds of views'//描述，不重要
