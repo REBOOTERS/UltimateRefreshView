@@ -254,13 +254,16 @@ public class UltimateRefreshView extends LinearLayout {
         }
 
         int topDistance = UpdateHeadViewMarginTop(deltaY);
-        // 如果header view topMargin 的绝对值大于或等于header + footer 的高度
+
+        Log.e("zzz", "the distance  is " + topDistance);
+
+        // 如果header view topMargin 的绝对值大于或等于(header + footer) 四分之一 的高度
         // 说明footer view 完全显示出来了，修改footer view 的提示状态
-        if (Math.abs(topDistance) >= (mHeadViewHeight + mFooterViewHeight)
+        if (Math.abs(topDistance) >= (mHeadViewHeight + mFooterViewHeight)/4
                 && mFooterState != RELEASE_TO_REFRESH) {
             mBaseFooterAdapter.pullViewToRefresh(deltaY);
             mFooterState = RELEASE_TO_REFRESH;
-        } else if (Math.abs(topDistance) < (mHeadViewHeight + mFooterViewHeight)) {
+        } else if (Math.abs(topDistance) < (mHeadViewHeight + mFooterViewHeight)/4) {
             mBaseFooterAdapter.releaseViewToRefresh(deltaY);
             mFooterState = PULL_TO_REFRESH;
         }
@@ -378,13 +381,18 @@ public class UltimateRefreshView extends LinearLayout {
                     mPullState = PULL_DOWN_STATE;
                     belongToParentView = true;
                 }
-            }else if(deltaY < 0) {
+            } else if (deltaY < 0) {
                 View child = mRecyclerView.getChildAt(0);
                 if (child == null) {
                     belongToParentView = false;
                 }
-                LinearLayoutManager mLinearLayoutManager= (LinearLayoutManager) mRecyclerView.getLayoutManager();
-
+                if (mRecyclerView.computeVerticalScrollExtent() + mRecyclerView.computeVerticalScrollOffset()
+                        >= mRecyclerView.computeVerticalScrollRange()){
+                    belongToParentView = true;
+                    mPullState = PULL_UP_STATE;
+                }else {
+                    belongToParentView = false;
+                }
             }
         }
 
@@ -459,6 +467,7 @@ public class UltimateRefreshView extends LinearLayout {
 
     /**
      * //上拉或下拉至一半时，放弃下来，视为完成一次下拉统一处理，初始化所有内容
+     *
      * @param topMargin
      */
     private void reSetHeaderTopMargin(int topMargin) {
@@ -467,7 +476,7 @@ public class UltimateRefreshView extends LinearLayout {
             mBaseHeaderAdapter.headerRefreshComplete();
         }
 
-        if(mBaseFooterAdapter!=null){
+        if (mBaseFooterAdapter != null) {
             mBaseFooterAdapter.footerRefreshComplete();
         }
 
@@ -476,7 +485,6 @@ public class UltimateRefreshView extends LinearLayout {
         mHeaderView.setLayoutParams(params);
         invalidate();
     }
-
 
 
     public void setOnHeaderRefreshListener(OnHeaderRefreshListener onHeaderRefreshListener) {

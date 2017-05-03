@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'//添加
 
 android {
     compileSdkVersion 25
@@ -19,6 +20,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+    }
+
 }
 
 dependencies {
@@ -29,4 +40,14 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     testCompile 'junit:junit:4.12'
+}
+
+//添加
+publish {
+    userOrg = 'rebooter'//bintray.com用户名
+    groupId = 'com.rebooter'//jcenter上的路径
+    artifactId = 'ultrapullview'//项目名称
+    publishVersion = '1.0.0'//版本号
+    desc = 'This is a library for pull to Refresh for kinds of views'//描述，不重要
+    website = 'https://github.com/REBOOTERS/UltimateRefreshView'//网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
 }

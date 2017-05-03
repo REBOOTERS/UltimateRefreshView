@@ -39,6 +39,8 @@ public class ListViewFragment extends Fragment {
     }
 
     private void initView(View view) {
+        View headview = LayoutInflater.from(getContext()).inflate(R.layout.list_headview_layout,
+                null, false);
         ListView listView = (ListView) view.findViewById(R.id.listView);
         final List<String> datas = new ArrayList<>();
         for (int i = 0; i < PER_PAGE_NUM; i++) {
@@ -46,6 +48,7 @@ public class ListViewFragment extends Fragment {
         }
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, datas);
         listView.setAdapter(adapter);
+        listView.addHeaderView(headview);
         mUltimateRefreshView = (UltimateRefreshView) view.findViewById(R.id.refreshView);
         mUltimateRefreshView.setBaseHeaderAdapter(new MeiTuanHeaderAdapter(getContext()));
         mUltimateRefreshView.setBaseFooterAdapter();
@@ -80,7 +83,7 @@ public class ListViewFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                         mUltimateRefreshView.onFooterRefreshComplete();
                     }
-                }, 500);
+                }, 200);
             }
         });
     }

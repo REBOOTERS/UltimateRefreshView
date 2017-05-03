@@ -75,6 +75,7 @@ public class TraditionHeaderAdapter extends BaseHeaderAdapter {
         pull_to_refresh_image.setVisibility(View.VISIBLE);
         pull_to_refresh_image.setImageResource(R.drawable.ic_pulltorefresh_arrow);
         pull_to_refresh_progress.setVisibility(View.GONE);
+        pull_to_refresh_text.setVisibility(View.VISIBLE);
         pull_to_refresh_text.setText("");
     }
 }
