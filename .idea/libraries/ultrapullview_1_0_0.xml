@@ -1,8 +1,13 @@
 <component name="libraryTable">
   <library name="ultrapullview-1.0.0">
     <CLASSES>
+<<<<<<< HEAD
       <root url="jar://$USER_HOME$/.android/build-cache/2f854e23efe64cdb1e997a208ed88675fc7c089b/output/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.android/build-cache/2f854e23efe64cdb1e997a208ed88675fc7c089b/output/res" />
+=======
+      <root url="file://$USER_HOME$/.android/build-cache/2232f29061d865258f2962c7a741d3feb05e6f6a/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/2232f29061d865258f2962c7a741d3feb05e6f6a/output/jars/classes.jar!/" />
+>>>>>>> 37d464ecd4071bef8d60004d0f7d17937cedb24d
     </CLASSES>
     <JAVADOC />
     <SOURCES>
