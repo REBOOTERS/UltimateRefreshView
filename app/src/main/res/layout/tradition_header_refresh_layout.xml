@@ -3,43 +3,43 @@
                 android:id="@+id/pull_to_refresh_header"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="#f0f0f0"
+                android:background="#3c3f41"
                 android:gravity="center"
-                android:paddingBottom="15dip"
-                android:paddingTop="10dip" >
+                android:paddingBottom="10dip"
+                android:paddingTop="10dip">
 
-    <ProgressBar
-        android:id="@+id/pull_to_refresh_progress"
-        style="?android:attr/progressBarStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="30dip"
-        android:layout_marginRight="20dip"
-        android:layout_marginTop="10dip"
-        android:indeterminate="true"
-        android:visibility="gone" />
 
     <ImageView
+        android:layout_centerVertical="true"
         android:id="@+id/pull_to_refresh_image"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginLeft="30dip"
+        android:layout_marginLeft="50dip"
         android:layout_marginRight="20dip"
         android:gravity="center"
-        android:src="@drawable/ic_pulltorefresh_arrow"
-        android:visibility="visible" />
+        android:src="@drawable/erg"
+        android:visibility="visible"/>
+    <ImageView
+        android:layout_centerVertical="true"
+        android:id="@+id/pull_to_refresh_image1"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="50dip"
+        android:layout_marginRight="20dip"
+        android:gravity="center"
+        android:src="@drawable/era"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/pull_to_refresh_text"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_centerVertical="true"
         android:gravity="center"
         android:text="下拉刷新…"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#000000"
-        android:textStyle="bold"
-        android:visibility="visible" />
+        android:textColor="#ffffff"
+        android:visibility="visible"/>
 
 </RelativeLayout>

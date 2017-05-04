@@ -1,7 +1,7 @@
 package com.sak.app.adapter;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.drawable.AnimationDrawable;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -14,7 +14,6 @@ import com.sak.ultilviewlib.adapter.BaseHeaderAdapter;
 
 public class SimpleHeaderAdapter extends BaseHeaderAdapter {
     private ImageView loading;
-    private ObjectAnimator rotateAnim;
 
     public SimpleHeaderAdapter(Context context) {
         super(context);
@@ -29,10 +28,9 @@ public class SimpleHeaderAdapter extends BaseHeaderAdapter {
 
     @Override
     public void pullViewToRefresh(int deltaY) {
-        rotateAnim = ObjectAnimator.ofFloat(loading, "rotation", 0, 360f);
-        rotateAnim.setDuration(1000);
-        rotateAnim.setRepeatCount(-1);
-        rotateAnim.start();
+        loading.setImageResource(R.drawable.simple_loading);
+        AnimationDrawable mAnimationDrawable= (AnimationDrawable) loading.getDrawable();
+        mAnimationDrawable.start();
     }
 
     @Override
@@ -47,9 +45,6 @@ public class SimpleHeaderAdapter extends BaseHeaderAdapter {
 
     @Override
     public void headerRefreshComplete() {
-        if (rotateAnim != null) {
-            rotateAnim.cancel();
-        }
-        rotateAnim = null;
     }
+
 }

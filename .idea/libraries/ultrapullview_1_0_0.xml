@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="ultrapullview-1.0.0">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.android/build-cache/2232f29061d865258f2962c7a741d3feb05e6f6a/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/2232f29061d865258f2962c7a741d3feb05e6f6a/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.reoobter/ultrapullview/1.0.0/5b5e7ef6d77fcffc1c793980a580e7c810b71fc1/ultrapullview-1.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
