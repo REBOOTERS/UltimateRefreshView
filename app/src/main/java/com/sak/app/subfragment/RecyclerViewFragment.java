@@ -3,6 +3,7 @@ package com.sak.app.subfragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ public class RecyclerViewFragment extends Fragment {
             datas.add("this is item " + i);
         }
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),RecyclerView.VERTICAL));
         mRecyclerView.setAdapter(new MyAdapter());
         mUltimateRefreshView = (UltimateRefreshView) view.findViewById(R.id.refreshView);
         mUltimateRefreshView.setBaseHeaderAdapter(new TraditionHeaderAdapter(getContext()));
