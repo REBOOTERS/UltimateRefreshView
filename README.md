@@ -1,6 +1,6 @@
 # UltimateRefreshView
-UltimateRefreshView
 
+[使用说明](http://www.jianshu.com/p/4343492c01f7)
 
 <img src="https://raw.githubusercontent.com/REBOOTERS/UltimateRefreshView/master/captures/listview_pull_down.gif"/>
 
