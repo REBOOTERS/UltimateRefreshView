@@ -45,14 +45,14 @@ public class TraditionHeaderAdapter extends BaseHeaderAdapter {
 
     @Override
     public void pullViewToRefresh(int deltaY) {
-        pull_to_refresh_text.setText("下拉刷新…");
+        pull_to_refresh_text.setText("下拉刷新");
         pull_to_refresh_image.clearAnimation();
         pull_to_refresh_image.startAnimation(mFlipAnimation);
     }
 
     @Override
     public void releaseViewToRefresh(int deltaY) {
-        pull_to_refresh_text.setText("放开以刷新…");
+        pull_to_refresh_text.setText("释放立即刷新");
     }
 
     @Override
@@ -64,7 +64,7 @@ public class TraditionHeaderAdapter extends BaseHeaderAdapter {
         pull_to_refresh_image1.setImageResource(R.drawable.simple_loading);
         AnimationDrawable mAnimationDrawable= (AnimationDrawable) pull_to_refresh_image1.getDrawable();
         mAnimationDrawable.start();
-        pull_to_refresh_text.setText("正在加载…");
+        pull_to_refresh_text.setText("正在刷新…");
     }
 
     @Override

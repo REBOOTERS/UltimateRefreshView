@@ -65,13 +65,12 @@ public class JDAppHeaderAdpater extends BaseHeaderAdapter {
     @Override
     public void headerRefreshComplete() {
         headerText.setText("下拉刷新…");
-        loading.setVisibility(View.GONE);
-        loading.setImageResource(R.drawable.x_);
         loading.clearAnimation();
+        loading.setImageResource(R.drawable.x_);
+        loading.setVisibility(View.GONE);
         loading_pre.setVisibility(View.VISIBLE);
         loading_pre.setScaleY(0);
         loading_pre.setScaleX(0);
         pull_distance=0;
-
     }
 }
