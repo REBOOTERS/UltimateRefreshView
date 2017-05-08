@@ -1,5 +1,9 @@
 # UltimateRefreshView
 
+### 预览
+
+<img src="https://raw.githubusercontent.com/REBOOTERS/UltimateRefreshView/master/captures/listview_pull_down.gif"/>
+
 ### 功能
 
 - 支持ListView，RecycleView，ScrollView，WebView 
@@ -21,7 +25,7 @@ compile 'com.reoobter:ultrapullview:1.0.0'
 
 *meituan_header_refresh_layout.xml*
 
-```
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
@@ -212,9 +216,9 @@ public class ListViewFragment extends Fragment {
 }
 ```
 
+## 效果图
 
 
-<img src="https://raw.githubusercontent.com/REBOOTERS/UltimateRefreshView/master/captures/listview_pull_down.gif"/>
 
 <img src="https://raw.githubusercontent.com/REBOOTERS/UltimateRefreshView/master/captures/GIF.gif"/>
 
@@ -227,4 +231,4 @@ public class ListViewFragment extends Fragment {
 <img src="https://raw.githubusercontent.com/REBOOTERS/UltimateRefreshView/master/captures/pull_up.gif"/>
 
 
-[详细说明](http://www.jianshu.com/p/4343492c01f7)
+[更多详细说明](http://www.jianshu.com/p/4343492c01f7)
