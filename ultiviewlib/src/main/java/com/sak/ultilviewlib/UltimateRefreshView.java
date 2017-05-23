@@ -207,29 +207,26 @@ public class UltimateRefreshView extends LinearLayout {
         if (mHeaderState == REFRESHING) {
             belongToParentView = false;
         }
-
+        //##############################################################
         if (mAdapterView != null) {
 
             if (deltaY > 0) {
                 View child = mAdapterView.getChildAt(0);
                 if (child == null) {
                     belongToParentView = false;
-                }
-
-                if (mAdapterView.getFirstVisiblePosition() == 0 && child.getTop() == 0) {
+                } else if (mAdapterView.getFirstVisiblePosition() == 0 && child.getTop() == 0) {
                     mPullState = PULL_DOWN_STATE;
                     belongToParentView = true;
                 }
             } else if (deltaY < 0) {
-                View lastChild = mAdapterView.getChildAt(mAdapterView
-                        .getChildCount() - 1);
+                View lastChild = mAdapterView.getChildAt(mAdapterView.getChildCount() - 1);
                 if (lastChild == null) {
                     // 如果mAdapterView中没有数据,不拦截
                     belongToParentView = false;
                 }
                 // 最后一个子view的Bottom小于父View的高度说明mAdapterView的数据没有填满父view,
                 // 等于父View的高度说明mAdapterView已经滑动到最后
-                if (lastChild.getBottom() <= getHeight()
+                else if (lastChild.getBottom() <= getHeight()
                         && mAdapterView.getLastVisiblePosition() == mAdapterView
                         .getCount() - 1) {
                     mPullState = PULL_UP_STATE;
@@ -237,9 +234,8 @@ public class UltimateRefreshView extends LinearLayout {
                 }
             }
         }
-
-
-        if (mRecyclerView != null) {
+        //##############################################################
+        else if (mRecyclerView != null) {
             if (deltaY > 0) {
                 View child = mRecyclerView.getChildAt(0);
                 if (child == null) {
@@ -266,8 +262,8 @@ public class UltimateRefreshView extends LinearLayout {
                 }
             }
         }
-
-        if (mScrollView != null) {
+        //##############################################################
+        else if (mScrollView != null) {
             View child = mScrollView.getChildAt(0);
             if (deltaY > 0) {
 
@@ -288,8 +284,8 @@ public class UltimateRefreshView extends LinearLayout {
 
             }
         }
-
-        if (mWebView != null) {
+        //##############################################################
+        else if (mWebView != null) {
             View child = mWebView.getChildAt(0);
             if (deltaY > 0) {
 
