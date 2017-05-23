@@ -1,5 +1,6 @@
 package com.sak.ultilviewlib;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +8,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -36,6 +38,8 @@ public class UltimateRefreshView extends LinearLayout {
     private static final int PULL_DOWN_STATE = 1;
 
     private int mPullState;
+
+    private int animDuration = 300;//头、尾 部回弹动画执行时间
 
     /**
      * list or grid
@@ -192,6 +196,116 @@ public class UltimateRefreshView extends LinearLayout {
         return false;
     }
 
+    /**
+     * 滑动由父View（当前View）处理
+     *
+     * @param deltaY
+     * @return
+     */
+    private boolean isParentViewScroll(int deltaY) {
+        boolean belongToParentView = false;
+        if (mHeaderState == REFRESHING) {
+            belongToParentView = false;
+        }
+        //##############################################################
+        if (mAdapterView != null) {
+
+            if (deltaY > 0) {
+                View child = mAdapterView.getChildAt(0);
+                if (child == null) {
+                    belongToParentView = false;
+                } else if (mAdapterView.getFirstVisiblePosition() == 0 && child.getTop() == 0) {
+                    mPullState = PULL_DOWN_STATE;
+                    belongToParentView = true;
+                }
+            } else if (deltaY < 0) {
+                View lastChild = mAdapterView.getChildAt(mAdapterView.getChildCount() - 1);
+                if (lastChild == null) {
+                    // 如果mAdapterView中没有数据,不拦截
+                    belongToParentView = false;
+                }
+                // 最后一个子view的Bottom小于父View的高度说明mAdapterView的数据没有填满父view,
+                // 等于父View的高度说明mAdapterView已经滑动到最后
+                else if (lastChild.getBottom() <= getHeight()
+                        && mAdapterView.getLastVisiblePosition() == mAdapterView
+                        .getCount() - 1) {
+                    mPullState = PULL_UP_STATE;
+                    belongToParentView = true;
+                }
+            }
+        }
+        //##############################################################
+        else if (mRecyclerView != null) {
+            if (deltaY > 0) {
+                View child = mRecyclerView.getChildAt(0);
+                if (child == null) {
+                    belongToParentView = false;
+                }
+                LinearLayoutManager mLinearLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+                int firstPosition = mLinearLayoutManager.findFirstCompletelyVisibleItemPosition();
+
+                if (firstPosition == 0) {
+                    mPullState = PULL_DOWN_STATE;
+                    belongToParentView = true;
+                }
+            } else if (deltaY < 0) {
+                View child = mRecyclerView.getChildAt(0);
+                if (child == null) {
+                    belongToParentView = false;
+                }
+                if (mRecyclerView.computeVerticalScrollExtent() + mRecyclerView.computeVerticalScrollOffset()
+                        >= mRecyclerView.computeVerticalScrollRange()) {
+                    belongToParentView = true;
+                    mPullState = PULL_UP_STATE;
+                } else {
+                    belongToParentView = false;
+                }
+            }
+        }
+        //##############################################################
+        else if (mScrollView != null) {
+            View child = mScrollView.getChildAt(0);
+            if (deltaY > 0) {
+
+                if (child == null) {
+                    belongToParentView = false;
+                }
+
+                int distance = mScrollView.getScrollY();
+                if (distance == 0) {
+                    mPullState = PULL_DOWN_STATE;
+                    belongToParentView = true;
+                }
+            } else if (deltaY < 0
+                    && child.getMeasuredHeight() <= getHeight()
+                    + mScrollView.getScrollY()) {
+                mPullState = PULL_UP_STATE;
+                belongToParentView = true;
+
+            }
+        }
+        //##############################################################
+        else if (mWebView != null) {
+            View child = mWebView.getChildAt(0);
+            if (deltaY > 0) {
+
+                if (child == null) {
+                    belongToParentView = false;
+                }
+
+                int distance = mWebView.getScrollY();
+                if (distance == 0) {
+                    mPullState = PULL_DOWN_STATE;
+                    belongToParentView = true;
+                }
+            }
+        }
+
+
+        return belongToParentView;
+    }
+
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int y = (int) event.getRawY();
@@ -233,6 +347,11 @@ public class UltimateRefreshView extends LinearLayout {
     }
 
 
+    /**
+     * 计算下拉刷新相关
+     *
+     * @param deltaY
+     */
     private void initHeaderViewToRefresh(int deltaY) {
         if (mBaseHeaderAdapter == null) {
             return;
@@ -248,28 +367,12 @@ public class UltimateRefreshView extends LinearLayout {
 
     }
 
-    private void initFooterViewToRefresh(int deltaY) {
-        if (mBaseFooterAdapter == null) {
-            return;
-        }
-
-        int topDistance = UpdateHeadViewMarginTop(deltaY);
-
-        Log.e("zzz", "the distance  is " + topDistance);
-
-        // 如果header view topMargin 的绝对值大于或等于(header + footer) 四分之一 的高度
-        // 说明footer view 完全显示出来了，修改footer view 的提示状态
-        if (Math.abs(topDistance) >= (mHeadViewHeight + mFooterViewHeight)/4
-                && mFooterState != RELEASE_TO_REFRESH) {
-            mBaseFooterAdapter.pullViewToRefresh(deltaY);
-            mFooterState = RELEASE_TO_REFRESH;
-        } else if (Math.abs(topDistance) < (mHeadViewHeight + mFooterViewHeight)/4) {
-            mBaseFooterAdapter.releaseViewToRefresh(deltaY);
-            mFooterState = PULL_TO_REFRESH;
-        }
-    }
-
-
+    /**
+     * 更新下拉刷新相关
+     *
+     * @param deltaY
+     * @return
+     */
     private int UpdateHeadViewMarginTop(int deltaY) {
         LayoutParams params = (LayoutParams) mHeaderView.getLayoutParams();
         float topMargin = params.topMargin + deltaY * 0.3f;
@@ -290,6 +393,28 @@ public class UltimateRefreshView extends LinearLayout {
         mBaseHeaderAdapter.headerRefreshing();
         if (mOnHeaderRefreshListener != null) {
             mOnHeaderRefreshListener.onHeaderRefresh(this);
+        }
+    }
+
+
+    private void initFooterViewToRefresh(int deltaY) {
+        if (mBaseFooterAdapter == null) {
+            return;
+        }
+
+        int topDistance = UpdateHeadViewMarginTop(deltaY);
+
+        Log.e("zzz", "the distance  is " + topDistance);
+
+        // 如果header view topMargin 的绝对值大于或等于(header + footer) 四分之一 的高度
+        // 说明footer view 完全显示出来了，修改footer view 的提示状态
+        if (Math.abs(topDistance) >= (mHeadViewHeight + mFooterViewHeight) / 4
+                && mFooterState != RELEASE_TO_REFRESH) {
+            mBaseFooterAdapter.pullViewToRefresh(deltaY);
+            mFooterState = RELEASE_TO_REFRESH;
+        } else if (Math.abs(topDistance) < (mHeadViewHeight + mFooterViewHeight) / 4) {
+            mBaseFooterAdapter.releaseViewToRefresh(deltaY);
+            mFooterState = PULL_TO_REFRESH;
         }
     }
 
@@ -325,119 +450,6 @@ public class UltimateRefreshView extends LinearLayout {
         mFooterState = PULL_TO_REFRESH;
     }
 
-    /**
-     * 滑动由父View（当前View）处理
-     *
-     * @param deltaY
-     * @return
-     */
-    private boolean isParentViewScroll(int deltaY) {
-        boolean belongToParentView = false;
-        if (mHeaderState == REFRESHING) {
-            belongToParentView = false;
-        }
-
-        if (mAdapterView != null) {
-
-            if (deltaY > 0) {
-                View child = mAdapterView.getChildAt(0);
-                if (child == null) {
-                    belongToParentView = false;
-                }
-
-                if (mAdapterView.getFirstVisiblePosition() == 0 && child.getTop() == 0) {
-                    mPullState = PULL_DOWN_STATE;
-                    belongToParentView = true;
-                }
-            } else if (deltaY < 0) {
-                View lastChild = mAdapterView.getChildAt(mAdapterView
-                        .getChildCount() - 1);
-                if (lastChild == null) {
-                    // 如果mAdapterView中没有数据,不拦截
-                    belongToParentView = false;
-                }
-                // 最后一个子view的Bottom小于父View的高度说明mAdapterView的数据没有填满父view,
-                // 等于父View的高度说明mAdapterView已经滑动到最后
-                if (lastChild.getBottom() <= getHeight()
-                        && mAdapterView.getLastVisiblePosition() == mAdapterView
-                        .getCount() - 1) {
-                    mPullState = PULL_UP_STATE;
-                    belongToParentView = true;
-                }
-            }
-        }
-
-
-        if (mRecyclerView != null) {
-            if (deltaY > 0) {
-                View child = mRecyclerView.getChildAt(0);
-                if (child == null) {
-                    belongToParentView = false;
-                }
-                LinearLayoutManager mLinearLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
-                int firstPosition = mLinearLayoutManager.findFirstCompletelyVisibleItemPosition();
-
-                if (firstPosition == 0) {
-                    mPullState = PULL_DOWN_STATE;
-                    belongToParentView = true;
-                }
-            } else if (deltaY < 0) {
-                View child = mRecyclerView.getChildAt(0);
-                if (child == null) {
-                    belongToParentView = false;
-                }
-                if (mRecyclerView.computeVerticalScrollExtent() + mRecyclerView.computeVerticalScrollOffset()
-                        >= mRecyclerView.computeVerticalScrollRange()){
-                    belongToParentView = true;
-                    mPullState = PULL_UP_STATE;
-                }else {
-                    belongToParentView = false;
-                }
-            }
-        }
-
-        if (mScrollView != null) {
-            View child = mScrollView.getChildAt(0);
-            if (deltaY > 0) {
-
-                if (child == null) {
-                    belongToParentView = false;
-                }
-
-                int distance = mScrollView.getScrollY();
-                if (distance == 0) {
-                    mPullState = PULL_DOWN_STATE;
-                    belongToParentView = true;
-                }
-            } else if (deltaY < 0
-                    && child.getMeasuredHeight() <= getHeight()
-                    + mScrollView.getScrollY()) {
-                mPullState = PULL_UP_STATE;
-                belongToParentView = true;
-
-            }
-        }
-
-        if (mWebView != null) {
-            View child = mWebView.getChildAt(0);
-            if (deltaY > 0) {
-
-                if (child == null) {
-                    belongToParentView = false;
-                }
-
-                int distance = mWebView.getScrollY();
-                if (distance == 0) {
-                    mPullState = PULL_DOWN_STATE;
-                    belongToParentView = true;
-                }
-            }
-        }
-
-
-        return belongToParentView;
-    }
-
 
     /**
      * 获取当前header view 的topMargin
@@ -459,14 +471,12 @@ public class UltimateRefreshView extends LinearLayout {
      */
     private void setHeaderTopMargin(int topMargin) {
 
-        LayoutParams params = (LayoutParams) mHeaderView.getLayoutParams();
-        params.topMargin = topMargin;
-        mHeaderView.setLayoutParams(params);
-        invalidate();
+        smoothMargin(topMargin);
     }
 
+
     /**
-     * //上拉或下拉至一半时，放弃下来，视为完成一次下拉统一处理，初始化所有内容
+     * 上拉或下拉至一半时，放弃下来，视为完成一次下拉统一处理，初始化所有内容
      *
      * @param topMargin
      */
@@ -480,12 +490,29 @@ public class UltimateRefreshView extends LinearLayout {
             mBaseFooterAdapter.footerRefreshComplete();
         }
 
-        LayoutParams params = (LayoutParams) mHeaderView.getLayoutParams();
-        params.topMargin = topMargin;
-        mHeaderView.setLayoutParams(params);
-        invalidate();
+        smoothMargin(topMargin);
     }
 
+
+    /**
+     * 平滑设置header view 的margin
+     *
+     * @param topMargin
+     */
+    private void smoothMargin(int topMargin) {
+        LayoutParams params = (LayoutParams) mHeaderView.getLayoutParams();
+        ValueAnimator animator = ValueAnimator.ofInt(params.topMargin, topMargin);
+        animator.setDuration(animDuration);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mHeadViewHeight);
+                lp.topMargin = (int) animation.getAnimatedValue();
+                mHeaderView.setLayoutParams(lp);
+            }
+        });
+        animator.start();
+    }
 
     public void setOnHeaderRefreshListener(OnHeaderRefreshListener onHeaderRefreshListener) {
         mOnHeaderRefreshListener = onHeaderRefreshListener;
