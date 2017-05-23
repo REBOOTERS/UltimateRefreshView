@@ -505,7 +505,7 @@ public class UltimateRefreshView extends LinearLayout {
     private void smoothMargin(int topMargin) {
         LayoutParams params = (LayoutParams) mHeaderView.getLayoutParams();
         ValueAnimator animator = ValueAnimator.ofInt(params.topMargin, topMargin);
-        animator.setDuration(animDuration).start();
+        animator.setDuration(animDuration);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
