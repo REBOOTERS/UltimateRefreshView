@@ -196,6 +196,120 @@ public class UltimateRefreshView extends LinearLayout {
         return false;
     }
 
+    /**
+     * 滑动由父View（当前View）处理
+     *
+     * @param deltaY
+     * @return
+     */
+    private boolean isParentViewScroll(int deltaY) {
+        boolean belongToParentView = false;
+        if (mHeaderState == REFRESHING) {
+            belongToParentView = false;
+        }
+
+        if (mAdapterView != null) {
+
+            if (deltaY > 0) {
+                View child = mAdapterView.getChildAt(0);
+                if (child == null) {
+                    belongToParentView = false;
+                }
+
+                if (mAdapterView.getFirstVisiblePosition() == 0 && child.getTop() == 0) {
+                    mPullState = PULL_DOWN_STATE;
+                    belongToParentView = true;
+                }
+            } else if (deltaY < 0) {
+                View lastChild = mAdapterView.getChildAt(mAdapterView
+                        .getChildCount() - 1);
+                if (lastChild == null) {
+                    // 如果mAdapterView中没有数据,不拦截
+                    belongToParentView = false;
+                }
+                // 最后一个子view的Bottom小于父View的高度说明mAdapterView的数据没有填满父view,
+                // 等于父View的高度说明mAdapterView已经滑动到最后
+                if (lastChild.getBottom() <= getHeight()
+                        && mAdapterView.getLastVisiblePosition() == mAdapterView
+                        .getCount() - 1) {
+                    mPullState = PULL_UP_STATE;
+                    belongToParentView = true;
+                }
+            }
+        }
+
+
+        if (mRecyclerView != null) {
+            if (deltaY > 0) {
+                View child = mRecyclerView.getChildAt(0);
+                if (child == null) {
+                    belongToParentView = false;
+                }
+                LinearLayoutManager mLinearLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+                int firstPosition = mLinearLayoutManager.findFirstCompletelyVisibleItemPosition();
+
+                if (firstPosition == 0) {
+                    mPullState = PULL_DOWN_STATE;
+                    belongToParentView = true;
+                }
+            } else if (deltaY < 0) {
+                View child = mRecyclerView.getChildAt(0);
+                if (child == null) {
+                    belongToParentView = false;
+                }
+                if (mRecyclerView.computeVerticalScrollExtent() + mRecyclerView.computeVerticalScrollOffset()
+                        >= mRecyclerView.computeVerticalScrollRange()) {
+                    belongToParentView = true;
+                    mPullState = PULL_UP_STATE;
+                } else {
+                    belongToParentView = false;
+                }
+            }
+        }
+
+        if (mScrollView != null) {
+            View child = mScrollView.getChildAt(0);
+            if (deltaY > 0) {
+
+                if (child == null) {
+                    belongToParentView = false;
+                }
+
+                int distance = mScrollView.getScrollY();
+                if (distance == 0) {
+                    mPullState = PULL_DOWN_STATE;
+                    belongToParentView = true;
+                }
+            } else if (deltaY < 0
+                    && child.getMeasuredHeight() <= getHeight()
+                    + mScrollView.getScrollY()) {
+                mPullState = PULL_UP_STATE;
+                belongToParentView = true;
+
+            }
+        }
+
+        if (mWebView != null) {
+            View child = mWebView.getChildAt(0);
+            if (deltaY > 0) {
+
+                if (child == null) {
+                    belongToParentView = false;
+                }
+
+                int distance = mWebView.getScrollY();
+                if (distance == 0) {
+                    mPullState = PULL_DOWN_STATE;
+                    belongToParentView = true;
+                }
+            }
+        }
+
+
+        return belongToParentView;
+    }
+
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int y = (int) event.getRawY();
@@ -338,119 +452,6 @@ public class UltimateRefreshView extends LinearLayout {
         setHeaderTopMargin(-mHeadViewHeight);
         mBaseFooterAdapter.footerRefreshComplete();
         mFooterState = PULL_TO_REFRESH;
-    }
-
-    /**
-     * 滑动由父View（当前View）处理
-     *
-     * @param deltaY
-     * @return
-     */
-    private boolean isParentViewScroll(int deltaY) {
-        boolean belongToParentView = false;
-        if (mHeaderState == REFRESHING) {
-            belongToParentView = false;
-        }
-
-        if (mAdapterView != null) {
-
-            if (deltaY > 0) {
-                View child = mAdapterView.getChildAt(0);
-                if (child == null) {
-                    belongToParentView = false;
-                }
-
-                if (mAdapterView.getFirstVisiblePosition() == 0 && child.getTop() == 0) {
-                    mPullState = PULL_DOWN_STATE;
-                    belongToParentView = true;
-                }
-            } else if (deltaY < 0) {
-                View lastChild = mAdapterView.getChildAt(mAdapterView
-                        .getChildCount() - 1);
-                if (lastChild == null) {
-                    // 如果mAdapterView中没有数据,不拦截
-                    belongToParentView = false;
-                }
-                // 最后一个子view的Bottom小于父View的高度说明mAdapterView的数据没有填满父view,
-                // 等于父View的高度说明mAdapterView已经滑动到最后
-                if (lastChild.getBottom() <= getHeight()
-                        && mAdapterView.getLastVisiblePosition() == mAdapterView
-                        .getCount() - 1) {
-                    mPullState = PULL_UP_STATE;
-                    belongToParentView = true;
-                }
-            }
-        }
-
-
-        if (mRecyclerView != null) {
-            if (deltaY > 0) {
-                View child = mRecyclerView.getChildAt(0);
-                if (child == null) {
-                    belongToParentView = false;
-                }
-                LinearLayoutManager mLinearLayoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
-                int firstPosition = mLinearLayoutManager.findFirstCompletelyVisibleItemPosition();
-
-                if (firstPosition == 0) {
-                    mPullState = PULL_DOWN_STATE;
-                    belongToParentView = true;
-                }
-            } else if (deltaY < 0) {
-                View child = mRecyclerView.getChildAt(0);
-                if (child == null) {
-                    belongToParentView = false;
-                }
-                if (mRecyclerView.computeVerticalScrollExtent() + mRecyclerView.computeVerticalScrollOffset()
-                        >= mRecyclerView.computeVerticalScrollRange()) {
-                    belongToParentView = true;
-                    mPullState = PULL_UP_STATE;
-                } else {
-                    belongToParentView = false;
-                }
-            }
-        }
-
-        if (mScrollView != null) {
-            View child = mScrollView.getChildAt(0);
-            if (deltaY > 0) {
-
-                if (child == null) {
-                    belongToParentView = false;
-                }
-
-                int distance = mScrollView.getScrollY();
-                if (distance == 0) {
-                    mPullState = PULL_DOWN_STATE;
-                    belongToParentView = true;
-                }
-            } else if (deltaY < 0
-                    && child.getMeasuredHeight() <= getHeight()
-                    + mScrollView.getScrollY()) {
-                mPullState = PULL_UP_STATE;
-                belongToParentView = true;
-
-            }
-        }
-
-        if (mWebView != null) {
-            View child = mWebView.getChildAt(0);
-            if (deltaY > 0) {
-
-                if (child == null) {
-                    belongToParentView = false;
-                }
-
-                int distance = mWebView.getScrollY();
-                if (distance == 0) {
-                    mPullState = PULL_DOWN_STATE;
-                    belongToParentView = true;
-                }
-            }
-        }
-
-
-        return belongToParentView;
     }
 
 
