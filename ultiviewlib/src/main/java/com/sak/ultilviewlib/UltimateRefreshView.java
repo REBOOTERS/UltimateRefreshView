@@ -383,7 +383,7 @@ public class UltimateRefreshView extends LinearLayout {
     }
 
 
-    private void headerRefreshing() {
+    public void headerRefreshing() {
         if (mBaseHeaderAdapter == null) {
             return;
         }

@@ -29,6 +29,9 @@ public class ListViewFragment extends Fragment {
     private int page = 0;
     private int PER_PAGE_NUM = 15;
 
+
+    private MeiTuanHeaderAdapter mBaseHeaderAdapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,8 +53,15 @@ public class ListViewFragment extends Fragment {
         listView.setAdapter(adapter);
         listView.addHeaderView(headview);
         mUltimateRefreshView = (UltimateRefreshView) view.findViewById(R.id.refreshView);
-        mUltimateRefreshView.setBaseHeaderAdapter(new MeiTuanHeaderAdapter(getContext()));
+
+
+        mBaseHeaderAdapter = new MeiTuanHeaderAdapter(getContext());
+        mUltimateRefreshView.setBaseHeaderAdapter(mBaseHeaderAdapter);
         mUltimateRefreshView.setBaseFooterAdapter();
+
+
+
+
         mUltimateRefreshView.setOnHeaderRefreshListener(new OnHeaderRefreshListener() {
             @Override
             public void onHeaderRefresh(UltimateRefreshView view) {
@@ -84,6 +94,14 @@ public class ListViewFragment extends Fragment {
                         mUltimateRefreshView.onFooterRefreshComplete();
                     }
                 }, 200);
+            }
+        });
+
+        mUltimateRefreshView.post(new Runnable() {
+            @Override
+            public void run() {
+                mBaseHeaderAdapter.headerRefreshing();
+                mUltimateRefreshView.headerRefreshing();
             }
         });
     }
