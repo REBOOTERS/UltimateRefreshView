@@ -1,3 +1,8 @@
+
+[ ![Download](https://api.bintray.com/packages/rookieboy/maven/ultrapullview/images/download.svg?version=1.0.1) ](https://bintray.com/rookieboy/maven/ultrapullview/1.0.1/link)
+
+
+
 # UltimateRefreshView
 
 ### 预览
