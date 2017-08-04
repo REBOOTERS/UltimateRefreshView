@@ -60,8 +60,6 @@ public class ListViewFragment extends Fragment {
         mUltimateRefreshView.setBaseFooterAdapter();
 
 
-
-
         mUltimateRefreshView.setOnHeaderRefreshListener(new OnHeaderRefreshListener() {
             @Override
             public void onHeaderRefresh(UltimateRefreshView view) {
@@ -100,10 +98,8 @@ public class ListViewFragment extends Fragment {
         mUltimateRefreshView.post(new Runnable() {
             @Override
             public void run() {
-                mBaseHeaderAdapter.headerRefreshing();
                 mUltimateRefreshView.headerRefreshing();
             }
         });
     }
-
 }

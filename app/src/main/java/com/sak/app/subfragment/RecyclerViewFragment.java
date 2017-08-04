@@ -74,6 +74,14 @@ public class RecyclerViewFragment extends Fragment {
                 },800);
             }
         });
+
+        mUltimateRefreshView.post(new Runnable() {
+            @Override
+            public void run() {
+                mUltimateRefreshView.headerRefreshing();
+            }
+        });
+
         return view;
     }
 

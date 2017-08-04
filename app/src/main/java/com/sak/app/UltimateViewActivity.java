@@ -47,8 +47,8 @@ public class UltimateViewActivity extends AppCompatActivity {
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mFragments.add(new ListViewFragment());
         mFragments.add(new RecyclerViewFragment());
+        mFragments.add(new ListViewFragment());
         mFragments.add(new ScrollViewFragment());
         mFragments.add(new WebViewFragment());
 
