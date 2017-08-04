@@ -48,9 +48,8 @@ public class RecyclerViewFragment extends Fragment {
         mUltimateRefreshView = (UltimateRefreshView) view.findViewById(R.id.refreshView);
         mUltimateRefreshView.setBaseHeaderAdapter(new TraditionHeaderAdapter(getContext()));
         mUltimateRefreshView.setBaseFooterAdapter(new TraditionFooterAdapter(getContext()));
-        //使用默认样式
-//        mUltimateRefreshView.setBaseFooterAdapter();
-//        mUltimateRefreshView.setBaseHeaderAdapter();
+
+
         mUltimateRefreshView.setOnHeaderRefreshListener(new OnHeaderRefreshListener() {
             @Override
             public void onHeaderRefresh(UltimateRefreshView view) {
@@ -75,12 +74,9 @@ public class RecyclerViewFragment extends Fragment {
             }
         });
 
-        mUltimateRefreshView.post(new Runnable() {
-            @Override
-            public void run() {
-                mUltimateRefreshView.headerRefreshing();
-            }
-        });
+        //在onCreate 方法中默认开始下了刷新
+        mUltimateRefreshView.headerRefreshing();
+
 
         return view;
     }
